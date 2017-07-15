@@ -1,4 +1,6 @@
 import FluentProvider
+import MySQLProvider
+
 
 extension Config {
     public func setup() throws {
@@ -13,6 +15,7 @@ extension Config {
     /// Configure providers
     private func setupProviders() throws {
         try addProvider(FluentProvider.Provider.self)
+        try addProvider(MySQLProvider.Provider.self)
     }
     
     /// Add all models that should have their
