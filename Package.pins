@@ -14,6 +14,12 @@
       "version": "1.0.0"
     },
     {
+      "package": "CMySQL",
+      "reason": null,
+      "repositoryURL": "https://github.com/vapor/cmysql.git",
+      "version": "2.0.2"
+    },
+    {
       "package": "CTLS",
       "reason": null,
       "repositoryURL": "https://github.com/vapor/ctls.git",
@@ -47,13 +53,13 @@
       "package": "Engine",
       "reason": null,
       "repositoryURL": "https://github.com/vapor/engine.git",
-      "version": "2.0.4"
+      "version": "2.1.1"
     },
     {
       "package": "Fluent",
       "reason": null,
       "repositoryURL": "https://github.com/vapor/fluent.git",
-      "version": "2.1.0"
+      "version": "2.1.2"
     },
     {
       "package": "FluentProvider",
@@ -74,6 +80,24 @@
       "version": "2.0.0"
     },
     {
+      "package": "MySQL",
+      "reason": null,
+      "repositoryURL": "https://github.com/vapor/mysql.git",
+      "version": "2.0.1"
+    },
+    {
+      "package": "MySQLDriver",
+      "reason": null,
+      "repositoryURL": "https://github.com/vapor/mysql-driver.git",
+      "version": "2.0.2"
+    },
+    {
+      "package": "MySQLProvider",
+      "reason": null,
+      "repositoryURL": "https://github.com/vapor/mysql-provider.git",
+      "version": "2.0.0"
+    },
+    {
       "package": "Node",
       "reason": null,
       "repositoryURL": "https://github.com/vapor/node.git",
@@ -83,7 +107,7 @@
       "package": "Random",
       "reason": null,
       "repositoryURL": "https://github.com/vapor/random.git",
-      "version": "1.0.0"
+      "version": "1.1.1"
     },
     {
       "package": "Routing",
@@ -113,7 +137,7 @@
       "package": "Vapor",
       "reason": null,
       "repositoryURL": "https://github.com/vapor/vapor.git",
-      "version": "2.1.0"
+      "version": "2.1.2"
     }
   ],
   "version": 1
