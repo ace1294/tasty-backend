@@ -1,0 +1,7 @@
+{
+    "host": "vaporJason",
+    "user": "jason",
+    "password": "$sparky06",
+    "database": "trasy-backend",
+    "encoding": "utf8mb4"
+}
