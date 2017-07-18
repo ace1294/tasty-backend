@@ -7,6 +7,11 @@ extension Droplet {
         try resource("watchlist", WatchlistController.self)
         
         // Creating Watchlist
+        get("Hello") { req in
+            return "hello"
+        }
+        
+        // Creating Watchlist
         post("user", User.parameter, "watchlist") { req in
             let user = try req.parameters.next(User.self)
             
