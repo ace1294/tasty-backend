@@ -40,6 +40,10 @@ extension Watchlist {
     var owner: Parent<Watchlist, User> {
         return parent(id: userId)
     }
+    
+    func symbols() throws -> Siblings<Watchlist, Symbol, Pivot<Watchlist, Symbol>> {
+        return siblings()
+    }
 }
 
 // MARK: Fluent Preparation
@@ -69,9 +73,10 @@ extension Watchlist: JSONConvertible {
     
     func makeJSON() throws -> JSON {
         var json = JSON()
+        try json.set(Watchlist.idKey, id)
         try json.set(Watchlist.nameKey, name)
         
-        let symbolsAll = try children(type: Symbol.self).all()
+        let symbolsAll = try symbols().all()
         let symbolJSONs = try symbolsAll.map { try $0.makeJSON() }
         let symbolsNode = JSON(symbolJSONs)
         try json.set(Watchlist.symbolsKey, symbolsNode)

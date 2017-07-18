@@ -26,5 +26,6 @@ extension Config {
         preparations.append(User.self)
         preparations.append(Watchlist.self)
         preparations.append(Symbol.self)
+        preparations.append(Pivot<Watchlist, Symbol>.self)
     }
 }

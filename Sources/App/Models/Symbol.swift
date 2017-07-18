@@ -13,14 +13,11 @@ final class Symbol: Model {
     let storage = Storage()
     
     var name: String
-    var watchlistId: Identifier?
     
     static let nameKey = "name"
-    static let watchlistIdKey = "watchlist_id"
     
     init(row: Row) throws {
         name = try row.get(Symbol.nameKey)
-        watchlistId = try row.get(Symbol.watchlistIdKey)
     }
     
     init(name: String) {
@@ -30,14 +27,7 @@ final class Symbol: Model {
     func makeRow() throws -> Row {
         var row = Row()
         try row.set(Symbol.nameKey, name)
-        try row.set(Symbol.watchlistIdKey, watchlistId)
         return row
-    }
-}
-
-extension Symbol {
-    var owner: Parent<Symbol, Watchlist> {
-        return parent(id: watchlistId)
     }
 }
 
@@ -48,7 +38,6 @@ extension Symbol: Preparation {
         try database.create(self) { builder in
             builder.id()
             builder.string(Symbol.nameKey)
-            builder.parent(Watchlist.self)
         }
     }
     
@@ -68,6 +57,7 @@ extension Symbol: JSONConvertible {
     
     func makeJSON() throws -> JSON {
         var json = JSON()
+        try json.set(Symbol.idKey, id)
         try json.set(Symbol.nameKey, name)
         return json
     }
