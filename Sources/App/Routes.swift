@@ -11,6 +11,14 @@ extension Droplet {
             return "hello"
         }
         
+        get("user", "facebookUserID", String.parameter) { req in
+            let user = try req.parameters.next(User.self)
+            
+            
+            return user
+        }
+        
+        
         // Creating Watchlist
         post("user", User.parameter, "watchlist") { req in
             let user = try req.parameters.next(User.self)

@@ -32,7 +32,7 @@ final class UserController: ResourceRepresentable {
     // 'DELETE' on 'posts/l2jd9' delete specfcic user
     func delete(req: Request, user: User) throws -> ResponseRepresentable {
         try user.delete()
-        return Response(status: .ok)
+        return Response(status: .ok, body: ["":""])
     }
     
     func makeResource() -> Resource<User> {
