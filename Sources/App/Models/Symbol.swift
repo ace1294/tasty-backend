@@ -34,6 +34,7 @@ final class Symbol: Model {
 // MARK: Fluent Preparation
 
 extension Symbol: Preparation {
+    // Prepare table in db
     static func prepare(_ database: Database) throws {
         try database.create(self) { builder in
             builder.id()

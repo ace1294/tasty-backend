@@ -8,64 +8,96 @@
 
 import Vapor
 import HTTP
+import FluentProvider
 
-/// Here we have a controller that helps facilitate
-/// RESTful interactions with our Posts table
+// Controller for interactions with Watchlist Table
 final class WatchlistController: ResourceRepresentable {
-    /// When users call 'GET' on '/posts'
-    /// it should return an index of all available posts
+    
+    static let watchlistPath = "watchlist"
+    
+    // 'GET' on '/watchlist' return all watchlist objects
     func index(req: Request) throws -> ResponseRepresentable {
         return try Watchlist.all().makeJSON()
     }
     
-    /// When consumers call 'POST' on '/posts' with valid JSON
-    /// create and save the post
-    func create(request: Request) throws -> ResponseRepresentable {
-        let watchlist = try request.watchlist()
-        try watchlist.save()
-        return watchlist
-    }
-    
-    /// When the consumer calls 'GET' on a specific resource, ie:
-    /// '/posts/13rd88' we should show that specific post
+    // Specific 'GET' on '/watchlist/1245' return individual watchlist object
     func show(req: Request, watchlist: Watchlist) throws -> ResponseRepresentable {
         return watchlist
     }
     
-    /// When the consumer calls 'DELETE' on a specific resource, ie:
-    /// 'posts/l2jd9' we should remove that resource from the database
-    func delete(req: Request, watchlist: Watchlist) throws -> ResponseRepresentable {
-        try watchlist.delete()
-        return Response(status: .ok)
-    }
-    
-    
-    /// When making a controller, it is pretty flexible in that it
-    /// only expects closures, this is useful for advanced scenarios, but
-    /// most of the time, it should look almost identical to this
-    /// implementation
     func makeResource() -> Resource<Watchlist> {
         return Resource(
             index: index,
-            store: create,
-            show: show,
-            destroy: delete
+            show: show
         )
     }
 }
 
+extension Droplet {
+    func setupWatchlistRoutes() throws {
+        // Get all watchlists for user
+        get(UserController.userPath, User.parameter, WatchlistController.watchlistPath) { req in
+            let user = try req.parameters.next(User.self)
+            let watchlistsAll = try user.watchlists.all()
+            let watchlistJSONs = try watchlistsAll.map { try $0.makeJSON() }
+            return JSON(watchlistJSONs)
+        }
+        
+        // Get individual watchlist for user
+        get(UserController.userPath, User.parameter, WatchlistController.watchlistPath, Watchlist.parameter) { req in
+            let watchlist = try req.parameters.next(Watchlist.self)
+            return watchlist
+        }
+        
+        // Creating Watchlist
+        post(UserController.userPath, User.parameter, WatchlistController.watchlistPath) { req in
+            let user = try req.parameters.next(User.self)
+            
+            guard let json = req.json else {
+                throw Abort(.badRequest)
+            }
+            
+            let list = try Watchlist(json: json)
+            list.userId = user.id
+            try list.save()
+            return user
+        }
+        
+        // Delete Watchlist
+        delete(UserController.userPath, User.parameter, WatchlistController.watchlistPath, Watchlist.parameter) { req in
+            let user = try req.parameters.next(User.self)
+            let watchlist = try req.parameters.next(Watchlist.self)
+            
+            let symbols = try watchlist.symbols().all()
+            for symbol in symbols {
+                // Delete Pivot
+                let pivotToDelete = try Pivot<Watchlist, Symbol>.makeQuery().and({ andGroup in
+                    try andGroup.filter("watchlist_id", watchlist.id)
+                    try andGroup.filter("symbol_id", symbol.id)
+                })
+                
+                try pivotToDelete.delete()
+                
+                // If not pivots left, delete symbol
+                if try Pivot<Watchlist, Symbol>.makeQuery().filter("symbol_id", symbol.id).all().count == 0 {
+                    try symbol.delete()
+                }
+            }
+            
+            try watchlist.delete()
+            
+            return user
+        }
+    }
+}
+
 extension Request {
-    /// Create a post from the JSON body
-    /// return BadRequest error if invalid
-    /// or no JSON
+    /// Create a Watchlist from the JSON body
     func watchlist() throws -> Watchlist {
         guard let json = json else { throw Abort.badRequest }
         return try Watchlist(json: json)
     }
 }
 
-/// Since PostController doesn't require anything to
-/// be initialized we can conform it to EmptyInitializable.
-///
-/// This will allow it to be passed by type.
+// This will allow it to be passed by type.
 extension WatchlistController: EmptyInitializable { }

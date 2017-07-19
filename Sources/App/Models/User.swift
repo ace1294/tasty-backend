@@ -48,8 +48,7 @@ extension User {
 // MARK: Fluent Preparation
 
 extension User: Preparation {
-    /// Prepares a table/collection in the database
-    /// for storing Posts
+    // Prepare table in db
     static func prepare(_ database: Database) throws {
         try database.create(self) { builder in
             builder.id()
@@ -58,7 +57,6 @@ extension User: Preparation {
         }
     }
     
-    /// Undoes what was done in `prepare`
     static func revert(_ database: Database) throws {
         try database.delete(self)
     }
@@ -76,9 +74,10 @@ extension User: JSONConvertible {
     
     func makeJSON() throws -> JSON {
         var json = JSON()
+        try json.set(User.idKey, id)
         try json.set(User.nameKey, name)
         try json.set(User.facebookIDKey, facebookUserID)
-        let watchlistsAll = try children(type: Watchlist.self).all()
+        let watchlistsAll = try watchlists.all()
         let watchlistJSONs = try watchlistsAll.map { try $0.makeJSON() }
         let watchlistsNode = JSON(watchlistJSONs)
         try json.set(User.watchlistsKey, watchlistsNode)

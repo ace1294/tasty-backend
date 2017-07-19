@@ -9,8 +9,11 @@
 import Vapor
 import HTTP
 
-// Controller for RESTful interactions with User Table
+// Controller for interactions with User Table
 final class UserController: ResourceRepresentable {
+    
+    static let userPath = "user"
+    static let facebookUserIdPath = "facebookUserId"
     
     // 'GET' on '/user' return all user objects
     func index(req: Request) throws -> ResponseRepresentable {
@@ -29,23 +32,34 @@ final class UserController: ResourceRepresentable {
         return user
     }
     
-    // 'DELETE' on 'posts/l2jd9' delete specfcic user
-    func delete(req: Request, user: User) throws -> ResponseRepresentable {
-        try user.delete()
-        return Response(status: .ok, body: ["":""])
-    }
-    
     func makeResource() -> Resource<User> {
         return Resource(
             index: index,
             store: create,
-            show: show,
-            destroy: delete
+            show: show
         )
     }
 }
 
+extension Droplet {
+    
+    func setupUserRoutes() throws {
+        get(UserController.userPath, UserController.facebookUserIdPath, String.parameter) { req in
+            let facebookId = try req.parameters.next(String.self)
+            let user = try User.makeQuery().filter(User.facebookIDKey, facebookId).first()
+            
+            if let u = user {
+                return u
+            }
+            else {
+                return Response(status: .noContent)
+            }
+        }
+    }
+}
+
 extension Request {
+    // Create a user from the JSON body
     func user() throws -> User {
         guard let json = json else { throw Abort.badRequest }
         return try User(json: json)

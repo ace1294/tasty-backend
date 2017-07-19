@@ -49,6 +49,7 @@ extension Watchlist {
 // MARK: Fluent Preparation
 
 extension Watchlist: Preparation {
+    // Prepare table in db
     static func prepare(_ database: Database) throws {
         try database.create(self) { builder in
             builder.id()
