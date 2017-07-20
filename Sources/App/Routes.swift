@@ -12,8 +12,8 @@ extension Droplet {
         try setupSymbolRoutes()
         
         // Creating Watchlist
-        get("helo") { req in
-            return "hello tasty backend"
+        get("hello") { req in
+            return "welcome to the tasty backend"
         }
         
     }
