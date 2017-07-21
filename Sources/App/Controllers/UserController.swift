@@ -24,6 +24,21 @@ final class UserController: ResourceRepresentable {
     func create(request: Request) throws -> ResponseRepresentable {
         let user = try request.user()
         try user.save()
+        
+        // Create Default List for each new user
+        let defaultList = Watchlist(name: user.name + " first List")
+        defaultList.userId = user.id
+        try defaultList.save()
+        let aapl = Symbol(name: "AAPL")
+        try aapl.save()
+        try defaultList.symbols().add(aapl)
+        let msft = Symbol(name: "MSFT")
+        try msft.save()
+        try defaultList.symbols().add(msft)
+        let es = Symbol(name: "ES")
+        try es.save()
+        try defaultList.symbols().add(es)
+        
         return user
     }    
     
